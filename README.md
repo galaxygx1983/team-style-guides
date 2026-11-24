@@ -9,6 +9,19 @@
 
 两个包的形状一样：`SKILL.md` 是入口，含红线表与评审口径；`references/` 按主题分册放条款正文；`assets/` 放能直接落到仓库根的机器化配置。
 
+## 规范文档版
+
+两个技能包的条款另有一份合并重排的正式规范文档，按 GB/T 1.1 的行文体例组织（文档属性表、范围、规范性引用文件、术语和定义、总体原则与红线、编号条款、实施与评审、附录），供评审、交底、归档引用，可直接打印成册：
+
+| 文档 | 编号 | 文件 |
+|---|---|---|
+| Go 编码规范（团队版） | `RAIL-STD-GO-001` | [`standards/go-coding-standard.md`](standards/go-coding-standard.md) |
+| C++17 编码规范（团队版） | `RAIL-STD-CPP-001` | [`standards/cpp17-coding-standard.md`](standards/cpp17-coding-standard.md) |
+
+条款编号（`GO-CONC-01` 这类稳定标识）与技能包逐条对应，两套引用路径互不冲突：改代码时读技能包（按主题分册，便于按需加载）；写评审意见、对外交底、投标文件时引文档条号（如 `5.3.7`）。
+
+内容同源，改一处要同步另一处：动了 `references/` 的条款，`standards/` 里对应条号也要跟着改，反之亦然。
+
 ## 装法
 
 把仓库地址交给编码代理，让它自己装：
@@ -66,6 +79,10 @@ cpp-style-guide/
     residual-rules.md      其余条款（命名、注释、内存等）
   assets/.clang-format     格式化配置
   assets/.clang-tidy       静态检查配置
+
+standards/
+  go-coding-standard.md      规范文档版：Go，RAIL-STD-GO-001
+  cpp17-coding-standard.md   规范文档版：C++17，RAIL-STD-CPP-001
 ```
 
 ## 许可
