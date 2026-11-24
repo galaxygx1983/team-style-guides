@@ -1,0 +1,122 @@
+---
+# golangci-lint v2 配置。放模块根目录。
+# 上游 uber-go/guide 的示例配置是 v1 格式且含已废弃的 golint，不要照抄。
+version: "2"
+
+run:
+  timeout: 5m
+  tests: true
+
+linters:
+  default: none
+  enable:
+    # 错误处理（对应 GO-ERR-*）
+    - errcheck
+    - errorlint
+    - nilerr
+    - wrapcheck
+    # 静态分析主力
+    - govet
+    - staticcheck
+    - ineffassign
+    - unused
+    - bodyclose
+    - rowserrcheck
+    - sqlclosecheck
+    # 并发（对应 GO-CONC-*）
+    - copyloopvar
+    - contextcheck
+    - fatcontext
+    # 安全（对应 GO-SEC-*）
+    - gosec
+    - noctx
+    # 风格与可读性（对应 GO-NAM-* / GO-API-*）
+    - revive
+    - misspell
+    - usestdlibvars
+    - perfsprint
+    - exhaustive
+    - gocritic
+    - predeclared
+    - nolintlint
+
+  settings:
+    errcheck:
+      check-type-assertions: true      # 断言必须检查 ok
+      check-blank: true                # _ = f() 也报
+    govet:
+      enable-all: true
+      disable:
+        - fieldalignment               # 结构体字段对齐优化，噪声大
+        - shadow                       # 变量遮蔽，误报多；人工评审代替
+    staticcheck:
+      checks:
+        - all
+        - -SA1019                      # 允许使用已废弃 API 的过渡期（迁移完成后开启）
+    revive:
+      rules:
+        - name: exported               # 导出标识符必须有注释（GO-NAM-09）
+        - name: package-comments
+        - name: error-strings          # 错误消息小写、无标点（GO-ERR-05）
+        - name: error-naming
+        - name: indent-error-flow      # 减少嵌套（GO-API-30）
+        - name: unexported-return
+        - name: context-as-argument
+        - name: context-keys-type
+        - name: time-naming
+        - name: var-naming
+        - name: receiver-naming
+        - name: range
+        - name: superfluous-else
+    gocritic:
+      enabled-tags:
+        - diagnostic
+        - style
+        - performance
+      disabled-checks:
+        - whyNoLint
+        - hugeParam
+    gosec:
+      excludes:
+        - G104    # 未处理的错误，errcheck 已覆盖
+    wrapcheck:
+      ignore-package-globs:
+        - encoding/*
+        - github.com/pkg/errors
+    exhaustive:
+      default-signifies-exhaustive: true   # switch 有 default 视为穷尽
+
+  exclusions:
+    generated: lax
+    rules:
+      # 测试文件放宽部分检查
+      - path: _test\.go
+        linters:
+          - errcheck
+          - gosec
+          - wrapcheck
+          - noctx
+      # 生成代码整体排除
+      - path: \.pb\.go
+        linters:
+          - lll
+          - revive
+          - gocritic
+          - errcheck
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  settings:
+    goimports:
+      local-prefixes:
+        - rail          # 换成你们的模块前缀
+    gofmt:
+      simplify: true
+  exclusions:
+    generated: lax
